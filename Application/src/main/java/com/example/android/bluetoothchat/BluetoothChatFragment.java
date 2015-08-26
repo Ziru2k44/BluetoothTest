@@ -160,7 +160,7 @@ public class BluetoothChatFragment extends Fragment {
         Log.d(TAG, "setupChat()");
 
         // Initialize the array adapter for the conversation thread
-        mConversationArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.message);
+        mConversationArrayAdapter = new ArrayAdapter<>(getActivity(), R.layout.message);
 
         mConversationView.setAdapter(mConversationArrayAdapter);
 
@@ -374,7 +374,7 @@ public class BluetoothChatFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.bluetooth_chat, menu);
     }
-
+    //Começar por aqui na sexta
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
