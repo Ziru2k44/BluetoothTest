@@ -21,6 +21,7 @@ import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -110,10 +111,14 @@ public class BluetoothChatFragment extends Fragment {
         if (!mBluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+
             // Otherwise, setup the chat session
         } else if (mChatService == null) {
             setupChat();
         }
+        ensureDiscoverable();
+        Intent serverIntent = new Intent(getActivity(), DeviceListActivity.class);
+        startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_INSECURE);
     }
 
     @Override
@@ -194,7 +199,7 @@ public class BluetoothChatFragment extends Fragment {
         if (mBluetoothAdapter.getScanMode() !=
                 BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
             Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 0);
             startActivity(discoverableIntent);
         }
     }
@@ -374,7 +379,7 @@ public class BluetoothChatFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.bluetooth_chat, menu);
     }
-    //Começar por aqui na sexta
+    //TODO
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -385,16 +390,29 @@ public class BluetoothChatFragment extends Fragment {
                 return true;
             }
             case R.id.insecure_connect_scan: {
-                // Launch the DeviceListActivity to see devices and do scan
+                // Launch the DeviceListActivity to see devices and do scanº
+                ensureDiscoverable();
+
+                /* TODO ficamos aqui
+                IntentFilter filter = new IntentFilter();
+
+                filter.addAction(BluetoothDevice.ACTION_FOUND);
+                filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+                filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+
+                registerReceiver(mReceiver, filter);
+                mBluetoothAdapter.startDiscovery();
+                */
+
                 Intent serverIntent = new Intent(getActivity(), DeviceListActivity.class);
                 startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_INSECURE);
                 return true;
             }
-            case R.id.discoverable: {
-                // Ensure this device is discoverable by others
-                ensureDiscoverable();
-                return true;
-            }
+            //todo case R.id.discoverable: {
+            // Ensure this device is discoverable by others
+            //ensureDiscoverable();
+        //    return true;
+        //}
         }
         return false;
     }
